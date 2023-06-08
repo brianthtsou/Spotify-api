@@ -2,3 +2,5 @@
 .env
 Lib/
 Scripts/
+main.py
+playlists.py
