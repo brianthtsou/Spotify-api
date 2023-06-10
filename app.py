@@ -4,6 +4,7 @@ from spotipy.oauth2 import SpotifyOAuth
 import time
 import os
 from dotenv import load_dotenv
+import json
 
 app = Flask(__name__)
 load_dotenv()
@@ -31,23 +32,17 @@ def redirectPage():
     session[TOKEN_INFO] = token_info
     return redirect(url_for("index", _external=True))
 
-@app.route('/getTracks')
-def getTracks():
+@app.route('/getTopTracks')
+def getTopTracks():
     try:
         token_info = get_token()
     except:
         print("User not logged in")
         return redirect(url_for("login", _external=False))
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    all_songs = []
-    i = 0
-    while True:
-        items = sp.current_user_saved_tracks(limit=50, offset= i * 50)['items']
-        i += 1
-        all_songs += items
-        if len(items) < 50:
-            break
-    return str(len(all_songs))
+    result = sp.current_user_top_tracks(limit=1, offset=0, time_range='short_term')
+    print(result['items'])
+    return result['items'][0]['name']
         #return str(sp.current_user_saved_tracks(limit=50, offset=0)["items"][0])
 
 @app.route('/createPlaylist')
@@ -81,7 +76,7 @@ def create_spotify_oauth():
         client_id=os.getenv("CLIENT_ID"),
         client_secret=os.getenv("CLIENT_SECRET"),
         redirect_uri=url_for("redirectPage", _external=True),
-        scope=("user-library-read, playlist-modify-public")
+        scope=("user-library-read, playlist-modify-public, user-top-read")
         #playlist-modify-public
     )
 
