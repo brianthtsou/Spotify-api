@@ -29,7 +29,7 @@ def redirectPage():
     code = request.args.get('code')
     token_info = sp_oauth.get_access_token(code)
     session[TOKEN_INFO] = token_info
-    return redirect(url_for("createPlaylist", _external=True))
+    return redirect(url_for("index", _external=True))
 
 @app.route('/getTracks')
 def getTracks():
@@ -61,6 +61,9 @@ def createPlaylist():
     sp.user_playlist_create(user_id, "New Playlist", public=True, collaborative=False, description="test")
     return "Playlist successfully created!"
 
+@app.route('/CrPlaylistSelectionPage')
+def CrPlaylistSelectionPage():
+    return render_template('playlistSelection.html')
 
 def get_token():
     token_info = session.get(TOKEN_INFO, None)
