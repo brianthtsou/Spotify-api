@@ -40,10 +40,14 @@ def getTopTracks():
         print("User not logged in")
         return redirect(url_for("login", _external=False))
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    result = sp.current_user_top_tracks(limit=1, offset=0, time_range='short_term')
-    print(result['items'])
-    return result['items'][0]['name']
-        #return str(sp.current_user_saved_tracks(limit=50, offset=0)["items"][0])
+    result = sp.current_user_top_tracks(limit=5, offset=0, time_range='short_term')
+    tracks = []
+    for track in range(5):
+         print(str(result['items'][track]['name']))
+         tracks.append(str(result['items'][track]['name']))
+
+    return render_template('userTopTracks.html', tracks = tracks)
+
 
 @app.route('/createPlaylist')
 def createPlaylist():
