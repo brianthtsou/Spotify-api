@@ -3,8 +3,8 @@
 {% block content %}
     <h3>{% block title %} Your Top Tracks: {% endblock %}</h3>
     <ol>
-        {% for track in tracks %}
-            <li>{{ track }}</li>
+        {% for track, artists in tracks.items() %}
+            <li><b>{{ track }}</b> - {{ artists }}</li>
         {% endfor %}
     </ol>
 {% endblock %}

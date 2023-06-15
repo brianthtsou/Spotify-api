@@ -40,13 +40,22 @@ def getTopTracks():
         print("User not logged in")
         return redirect(url_for("login", _external=False))
     sp = spotipy.Spotify(auth=token_info['access_token'])
+
+    # retrieve (limit) number of top tracks as a json, stored in result
     result = sp.current_user_top_tracks(limit=5, offset=0, time_range='short_term')
     tracks = []
-    for track in range(5):
-         print(str(result['items'][track]['name']))
-         tracks.append(str(result['items'][track]['name']))
+    final_list = {} # for storing final 'song' : 'artist' dictionary
 
-    return render_template('userTopTracks.html', tracks = tracks)
+    for track in range(5):
+        artist_list = result['items'][track]['artists']
+        artists = []
+        for artist in range(len(artist_list)):
+            artists.append(artist_list[artist]["name"])
+        all_artists = ', '.join(artists) #in case of multiple artists, all need to be on one string
+
+        track_name = str(result['items'][track]['name'])
+        final_list[track_name] = all_artists
+    return render_template('userTopTracks.html', tracks = final_list)
 
 
 @app.route('/createPlaylist')
