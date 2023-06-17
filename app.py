@@ -44,22 +44,12 @@ def getTopTracks():
     # retrieve (limit) number of top tracks as a json, stored in result
     result = sp.current_user_top_tracks(limit=5, offset=0, time_range='short_term')
     tracks = []
-    final_list = {} # for storing final 'song' : 'artist' dictionary
-
-    for track in range(5):
-        artist_list = result['items'][track]['artists']
-        artists = []
-        for artist in range(len(artist_list)):
-            artists.append(artist_list[artist]["name"])
-        all_artists = ', '.join(artists) #in case of multiple artists, all need to be on one string
-
-        track_name = str(result['items'][track]['name'])
-        final_list[track_name] = all_artists
+    final_list = get_top_tracks_and_artists(num=5, result=result) # for storing final 'song' : 'artist' dictionary
     return render_template('userTopTracks.html', tracks = final_list)
 
 
-@app.route('/createPlaylist')
-def createPlaylist():
+@app.route('/createEmptyPlaylist')
+def createEmptyPlaylist():
     try:
         token_info = get_token()
     except:
@@ -67,7 +57,7 @@ def createPlaylist():
         return redirect(url_for("login", _external=False))
     sp = spotipy.Spotify(auth=token_info['access_token'])
     sp.user_playlist_create(user_id, "New Playlist", public=True, collaborative=False, description="test")
-    return "Playlist successfully created!"
+    return render_template('playlistCreated.html')
 
 @app.route('/CrPlaylistSelectionPage')
 def CrPlaylistSelectionPage():
@@ -93,3 +83,17 @@ def create_spotify_oauth():
         #playlist-modify-public
     )
 
+# method that retrieves dictionary of user's top tracks in dictionary form
+def get_top_tracks_and_artists(num, result):
+    final_list = {}
+    for track in range(num):
+        artist_list = result['items'][track]['artists']
+        artists = []
+        for artist in range(len(artist_list)):
+            artists.append(artist_list[artist]["name"])
+
+        all_artists = ', '.join(artists) #in case of multiple artists, all need to be on one string
+
+        track_name = str(result['items'][track]['name'])
+        final_list[track_name] = all_artists
+    return final_list
