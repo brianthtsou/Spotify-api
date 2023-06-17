@@ -17,12 +17,14 @@ user_id = os.getenv("USER_ID")
 def index():
     return render_template('index.html')
 
+#login page that connects directly to spotify to get user permissions
 @app.route('/login')
 def login():
     sp_oauth = create_spotify_oauth()
     auth_url = sp_oauth.get_authorize_url()
     return redirect(auth_url)
 
+#
 @app.route('/redirect')
 def redirectPage():
     sp_oauth = create_spotify_oauth()
@@ -63,6 +65,7 @@ def createEmptyPlaylist():
 def CrPlaylistSelectionPage():
     return render_template('playlistSelection.html')
 
+# retirieving authentication token
 def get_token():
     token_info = session.get(TOKEN_INFO, None)
     if not token_info:
@@ -74,6 +77,7 @@ def get_token():
         token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
     return token_info
 
+# creating spotify oauth authentication object
 def create_spotify_oauth():
     return SpotifyOAuth(
         client_id=os.getenv("CLIENT_ID"),
@@ -85,6 +89,7 @@ def create_spotify_oauth():
 
 # method that retrieves dictionary of user's top tracks in dictionary form
 def get_top_tracks_and_artists(num, result):
+    #result = json file from spotify
     final_list = {}
     for track in range(num):
         artist_list = result['items'][track]['artists']

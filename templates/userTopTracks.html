@@ -2,6 +2,14 @@
 
 {% block content %}
     <h3>{% block title %} Your Top Tracks: {% endblock %}</h3>
+    <select class="form-select" aria-label="Number of songs selection list">
+      <option selected>Number of tracks</option>
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="15">15</option>
+      <option value="20">20</option>
+    </select>
+    <br>
     <ol>
         {% for track, artists in tracks.items() %}
             <li><b>{{ track }}</b> - {{ artists }}</li>
