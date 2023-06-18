@@ -2,14 +2,26 @@
 
 {% block content %}
     <h3>{% block title %} Your Top Tracks: {% endblock %}</h3>
-    <select class="form-select" aria-label="Number of songs selection list">
-      <option selected>Number of tracks</option>
-      <option value="5">5</option>
-      <option value="10">10</option>
-      <option value="15">15</option>
-      <option value="20">20</option>
-    </select>
-    <button>Change</button>
+<!--    <select class="form-select" aria-label="Number of songs selection list">-->
+<!--      <option selected>Number of tracks</option>-->
+<!--      <option value="5">5</option>-->
+<!--      <option value="10">10</option>-->
+<!--      <option value="15">15</option>-->
+<!--      <option value="20">20</option>-->
+<!--    </select>-->
+<!--    <button>Change</button>-->
+    <!-- Objective is to change tracks displayed on dropdown list submit; may need .js file for this -->
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Choose Number of Tracks
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+        <a class="dropdown-item" href="{{ url_for('getTopTracks', num = 5)}}">5</a>
+        <a class="dropdown-item" href="{{ url_for('getTopTracks', num = 10)}}">10</a>
+        <a class="dropdown-item" href="{{ url_for('getTopTracks', num = 15)}}">15</a>
+          <a class="dropdown-item" href="{{ url_for('getTopTracks', num = 20)}}">20</a>
+      </div>
+    </div>
     <br>
     <ol>
         {% for track, artists in tracks.items() %}
