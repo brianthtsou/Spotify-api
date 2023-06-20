@@ -1,4 +1,5 @@
 from flask import Flask, request, url_for, session, redirect, render_template
+from datetime import date
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import time
@@ -63,7 +64,23 @@ def createEmptyPlaylist():
         print("User not logged in")
         return redirect(url_for("login", _external=False))
     sp = spotipy.Spotify(auth=token_info['access_token'])
-    sp.user_playlist_create(user_id, "New Playlist", public=True, collaborative=False, description="test")
+    sp.user_playlist_create(user_id, "New Playlist", public=True, collaborative=False, description="blank")
+    return render_template('playlistCreated.html')
+
+# !!!! this function needs to be completed!!! use recommend function using 'result' as seed, then add to playlist
+@app.route('/createDiscoveryPlaylist')
+def createDiscoveryPlaylist():
+    try:
+        token_info = get_token()
+    except:
+        print("User not logged in")
+        return redirect(url_for("login", _external=False))
+    sp = spotipy.Spotify(auth=token_info['access_token'])
+    today = str(date.today())
+    sp.user_playlist_create(user_id, f"Discovery - {today}", public=True, collaborative=False, description=f"{today}")
+
+    # pulls 20 short term top tracks from spotify as json, use as recommend function seeds
+    result = sp.current_user_top_tracks(limit=20, offset=0, time_range="short_term")
     return render_template('playlistCreated.html')
 
 @app.route('/CrPlaylistSelectionPage')
@@ -92,7 +109,8 @@ def create_spotify_oauth():
         #playlist-modify-public
     )
 
-# method that retrieves dictionary of user's top tracks in dictionary form
+# method that parses for track name and artists name from api json file, returns
+# a dictionary of user's top tracks + associated artists
 def get_top_tracks_and_artists(num, result):
     #result = json file from spotify
     final_list = {}
