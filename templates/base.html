@@ -22,7 +22,7 @@
                 <a class="nav-link" href="{{ url_for('login')}}">Login</a>
             </li>
                 <li><a class="nav-link" href="{{ url_for('CrPlaylistSelectionPage')}}">Create Playlist</a></li>
-                <li><a class="nav-link" href="{{ url_for('getTopTracks', num = 5)}}">View Top Tracks</a></li>
+                <li><a class="nav-link" href="{{ url_for('getTopTracks', scope='short_term', num = 5)}}">View Top Tracks</a></li>
             </ul>
         </div>
     </nav>

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>{% block title %} Your Top Tracks: {% endblock %}</h3>
+    <h3>{% block title %} Your Top Tracks ({{ current_scope }}): {% endblock %}</h3>
 <!--    <select class="form-select" aria-label="Number of songs selection list">-->
 <!--      <option selected>Number of tracks</option>-->
 <!--      <option value="5">5</option>-->
@@ -16,11 +16,16 @@
         Choose Number of Tracks
       </button>
       <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        <a class="dropdown-item" href="{{ url_for('getTopTracks', num = 5)}}">5</a>
-        <a class="dropdown-item" href="{{ url_for('getTopTracks', num = 10)}}">10</a>
-        <a class="dropdown-item" href="{{ url_for('getTopTracks', num = 15)}}">15</a>
-          <a class="dropdown-item" href="{{ url_for('getTopTracks', num = 20)}}">20</a>
+        <a class="dropdown-item" href="{{ url_for('getTopTracks', scope='short_term', num = 5)}}">5</a>
+        <a class="dropdown-item" href="{{ url_for('getTopTracks', scope='short_term', num = 10)}}">10</a>
+        <a class="dropdown-item" href="{{ url_for('getTopTracks', scope='short_term', num = 15)}}">15</a>
+          <a class="dropdown-item" href="{{ url_for('getTopTracks', scope='long_term', num = 20)}}">20</a>
       </div>
+    </div>
+    <div>
+        <input name="scope" type="radio" value="short-term"> Short-Term
+        <input name="scope" type="radio" value="medium-term"> Medium-Term
+        <input name="scope" type="radio" value="long-term"> Long-Term
     </div>
     <br>
     <ol>

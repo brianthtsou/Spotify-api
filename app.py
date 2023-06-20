@@ -34,22 +34,25 @@ def redirectPage():
     session[TOKEN_INFO] = token_info
     return redirect(url_for("index", _external=True))
 
-@app.route('/getTopTracks/<num>')
-def getTopTracks(num=0):
+@app.route('/getTopTracks', methods=['GET'])
+def getTopTracks(scope="", num=0):
     try:
         token_info = get_token()
     except:
         print("User not logged in")
         return redirect(url_for("login", _external=False))
     sp = spotipy.Spotify(auth=token_info['access_token'])
-
+    global current_top_track_scope
     # num = 5 by default, 10/15/20 by user selection
-    num = int(num)
+    # scope = short_term by default, medium_term/long_term by user selection
+    num = int(request.args.get('num'))
+    scope = str(request.args.get('scope'))
+    current_top_track_scope = scope
     # retrieve (limit) number of top tracks as a json, stored in result
-    result = sp.current_user_top_tracks(limit=num, offset=0, time_range='short_term')
+    result = sp.current_user_top_tracks(limit=num, offset=0, time_range=scope)
     tracks = []
     final_list = get_top_tracks_and_artists(num=num, result=result) # for storing final 'song' : 'artist' dictionary
-    return render_template('userTopTracks.html', tracks = final_list)
+    return render_template('userTopTracks.html', tracks = final_list, current_scope = scope)
 
 
 @app.route('/createEmptyPlaylist')
