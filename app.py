@@ -77,11 +77,26 @@ def createDiscoveryPlaylist():
         return redirect(url_for("login", _external=False))
     sp = spotipy.Spotify(auth=token_info['access_token'])
     today = str(date.today())
-    sp.user_playlist_create(user_id, f"Discovery - {today}", public=True, collaborative=False, description=f"{today}")
-
+    #sp.user_playlist_create(user_id, f"Discovery - {today}", public=True, collaborative=False, description=f"{today}")
+    seed_tracklist = [] #list to hold seeds for recommendation function
     # pulls 20 short term top tracks from spotify as json, use as recommend function seeds
-    result = sp.current_user_top_tracks(limit=20, offset=0, time_range="short_term")
-    return render_template('playlistCreated.html')
+    result = sp.current_user_top_tracks(limit=5, offset=0, time_range="short_term")
+    for track in range(5):
+        track_id = result['items'][track]['id']
+        seed_tracklist.append(track_id)
+
+    print(seed_tracklist)
+    # retrieves recommended tracks
+    discovery_list = sp.recommendations(seed_tracks=seed_tracklist, limit=1)
+    add_tracklist = [] #tracklist to be added to the playlist
+    for track in range(1):
+        track_id = discovery_list['tracks'][track]['id']
+        add_tracklist.append(track_id)
+        print(track_id)
+    # TODO: need to store tracks in a list to be added
+    #TODO: need to get playlist ID of newly created playlist, so can call user_playlist_add_tracks
+    #TODO: consolidate some of these actions into separate functions
+    return discovery_list
 
 @app.route('/CrPlaylistSelectionPage')
 def CrPlaylistSelectionPage():
