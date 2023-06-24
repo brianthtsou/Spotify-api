@@ -77,7 +77,13 @@ def createDiscoveryPlaylist():
         return redirect(url_for("login", _external=False))
     sp = spotipy.Spotify(auth=token_info['access_token'])
     today = str(date.today())
-    #sp.user_playlist_create(user_id, f"Discovery - {today}", public=True, collaborative=False, description=f"{today}")
+    sp.user_playlist_create(user_id, f"Discovery - {today}", public=True, collaborative=False, description=f"{today}")
+
+    #gets newly created playlist (0 index is the playlist that was just created)
+    discovery_playlist_id = sp.current_user_playlists(limit=1, offset=0)["items"][0]["id"]
+    print(discovery_playlist_id)
+
+
     seed_tracklist = [] #list to hold seeds for recommendation function
     # pulls 20 short term top tracks from spotify as json, use as recommend function seeds
     result = sp.current_user_top_tracks(limit=5, offset=0, time_range="short_term")
@@ -85,18 +91,19 @@ def createDiscoveryPlaylist():
         track_id = result['items'][track]['id']
         seed_tracklist.append(track_id)
 
-    print(seed_tracklist)
     # retrieves recommended tracks
-    discovery_list = sp.recommendations(seed_tracks=seed_tracklist, limit=1)
+    discovery_list = sp.recommendations(seed_tracks=seed_tracklist, limit=20)
     add_tracklist = [] #tracklist to be added to the playlist
-    for track in range(1):
+    for track in range(20):
         track_id = discovery_list['tracks'][track]['id']
         add_tracklist.append(track_id)
         print(track_id)
     # TODO: need to store tracks in a list to be added
     #TODO: need to get playlist ID of newly created playlist, so can call user_playlist_add_tracks
+    sp.user_playlist_add_tracks(user_id, discovery_playlist_id, add_tracklist)
     #TODO: consolidate some of these actions into separate functions
-    return discovery_list
+    return render_template('playlistCreated.html')
+
 
 @app.route('/CrPlaylistSelectionPage')
 def CrPlaylistSelectionPage():
